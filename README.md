@@ -1,5 +1,5 @@
 # anitadayoff
-Determine days off 
+Determine days off by reading a csv file and parsing dates using luxon.js. From list of dates, create google calendar events
 
 ### Install
 ```
@@ -23,8 +23,8 @@ yarn start INPUT_FILE="another.csv"
 ```
 
 v1
-- you need a credentials.json and token.json in the root directory
-- `node gcal.js`
+- you need a `credentials.json` and `token.json` in the `src/` directory
+- `node src/gcal.js`
 
 ### Development plan
 v0
@@ -36,3 +36,14 @@ v1
 
 v2
 - OCR from picture for initials
+
+### TODO
+Holidays are treated like weekends?
+
+
+### Resources
+https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html
+https://stackoverflow.com/questions/41776978/how-to-read-csv-file-in-node-js
+https://developers.google.com/calendar/quickstart/nodejs
+https://developers.google.com/calendar/auth
+

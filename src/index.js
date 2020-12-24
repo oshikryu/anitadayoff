@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import fs from 'fs'
 import csvParse from 'csv-parse'
+import { processCalendarEvents } from './calendar'
 
 export const WEEKDAYS = [ 1,2,3,4,5 ]
 export const WEEKEND = [ 6,7 ]
@@ -21,14 +22,20 @@ export function getDaysOff(input) {
   // array of numbers
   const weekendDaysOn = []
 
-  const monthsTouched = new Set()
+  const monthCounter = []
+  const monthsTouched = []
 
   // assign days on and off
   input.forEach((arr) => {
     const [year, month, day] = arr
     const dt = DateTime.local(Number(year), Number(month), Number(day))
     const dayOfWeek = dt.weekday
-    monthsTouched.add(dt.month)
+
+    const curMonth = dt.month
+    if (!monthCounter.includes(curMonth)) {
+      monthsTouched.push(dt)
+      monthCounter.push(curMonth)
+    }
 
     if (WEEKDAYS.includes(dayOfWeek)) {
       // day off
@@ -39,8 +46,9 @@ export function getDaysOff(input) {
   })
 
   // assign weekend days off
-  Array.from(monthsTouched).forEach((month) => {
-    const currentYear = DateTime.local().get('year')
+  monthsTouched.forEach((dt) => {
+    const currentYear = dt.get('year')
+    const month = dt.get('month')
     const luxonMonth = DateTime.local(currentYear, month)
     const daysInMonth = luxonMonth.get('daysInMonth')
     for (let idx=1; idx<=daysInMonth; idx +=1) {
@@ -68,14 +76,18 @@ export const sortDaysOff = (input) => {
   })
 }
 
-const callback = (input) => {
+const processCsv = (input) => {
   const daysOff = getDaysOff(input)
   const sorted = sortDaysOff(daysOff)
-  const formatted = sorted.map((off) => {
+  const debugMode = sorted.map((off) => {
     return `${off.weekdayShort} ${off.year}-${off.month}-${off.day}`
   })
-  console.log(formatted);
-  return formatted
+  // console.log(debugMode);
+  return sorted.map((off) => {
+    const paddedMonth = `${off.month}`.padStart(2, 0)
+    const paddedDay = `${off.day}`.padStart(2, 0)
+    return `${off.year}-${paddedMonth}-${paddedDay}`
+  })
 }
 
 /**
@@ -86,11 +98,12 @@ const callback = (input) => {
  *  @return {Array}
  */
 export const readCSV = (inputPath) => {
-  const input = []
   fs.readFile(inputPath, function (err, fileData) {
-    return csvParse(fileData, {columns: false, trim: true}, function(err, rows, idx) {
-      callback(rows.splice(1))
+    csvParse(fileData, {columns: false, trim: true}, function(err, rows, idx) {
+      const results = processCsv(rows.splice(1))
+      processCalendarEvents(results)
       // Your CSV data is in an array of arrys passed to this callback as rows.
     })
+
   })
 }
