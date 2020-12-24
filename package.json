@@ -6,6 +6,7 @@
   "dependencies": {
     "csv-parse": "^4.14.2",
     "esm": "^3.2.25",
+    "googleapis": "39",
     "luxon": "^1.25.0"
   },
   "name": "anitadayoff",

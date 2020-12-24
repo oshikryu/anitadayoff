@@ -16,10 +16,15 @@ year,month,day
 yarn start
 ```
 
+v0
 Or optionally your own csv file
 ```
 yarn start INPUT_FILE="another.csv"
 ```
+
+v1
+- you need a credentials.json and token.json in the root directory
+- `node gcal.js`
 
 ### Development plan
 v0
