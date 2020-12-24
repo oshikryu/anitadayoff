@@ -1,20 +1,26 @@
 # anitadayoff
 Determine days off by reading a csv file and parsing dates using luxon.js. From list of dates, create google calendar events
 
-### Install
+### Install and dependencies
 ```
 yarn install
 ```
-1. create a `input.csv` file to read dates with the headers:
+
+Create a `input.csv` file to read dates with the headers:
 ```
 year,month,day
 2020,12,25
 ```
 
+
+You need to generate a `credentials.json` and `token.json` in the `root` directory.
+Optionally do the quickstart method by running 
+```
+node gcal.js
+```
+
 ### Run
 
-- you need a `credentials.json` and `token.json` in the `src/` directory
-- `node src/gcal.js`
 
 ```
 yarn start
