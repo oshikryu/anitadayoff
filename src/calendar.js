@@ -1,12 +1,14 @@
 import fs from 'fs'
 import readline from 'readline'
 import { google } from 'googleapis'
+import { DateTime } from 'luxon'
 
 const SUMMARY_TITLE = 'Anita off'
 const MAX_RESULTS = 30
-const TIMEOUT_INTERVAL = 5000
+const TIMEOUT_INTERVAL = 1000
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const TOKEN_PATH = 'token.json';
+const START_OF_MONTH = DateTime.local().startOf('month').toISO()
 
 export const processCalendarEvents = async (dates) => {
   const params = {
@@ -26,7 +28,7 @@ export function listEvents(auth, params) {
   const calendar = google.calendar({version: 'v3', auth});
   calendar.events.list({
     calendarId: 'primary',
-    timeMin: (new Date()).toISOString(),
+    timeMin: START_OF_MONTH,
     maxResults: MAX_RESULTS,
     singleEvents: true,
     orderBy: 'startTime',
@@ -49,8 +51,8 @@ export function listEvents(auth, params) {
       const params = {
         dates: filteredDates
       }
-      // insertEvents(auth, params)
-
+      // comment to debug
+      insertEvents(auth, params)
     }
   });
 }
@@ -58,31 +60,33 @@ export function listEvents(auth, params) {
 export function insertEvents(auth, params) {
   const { dates=[] } = params
   const calendar = google.calendar({version: 'v3', auth});
-  dates.forEach((date) => {
-    setTimeout(TIMEOUT_INTERVAL)
+  let locker = false
+  dates.forEach((date, idx) => {
+    setTimeout(() => {
+        const event = {
+          summary: SUMMARY_TITLE,
+          start: {
+            date,
+          },
+          end: {
+            date,
+          },
+        }
 
-    const event = {
-      summary: SUMMARY_TITLE,
-      start: {
-        date,
-      },
-      end: {
-        date,
-      },
-    }
-
-    // to prevent rate limit issues
-    calendar.events.insert({
-      auth,
-      calendarId: 'primary',
-      resource: event,
-    }, (err, res) => {
-      if (err) {
-        console.log('There was an error contacting the Calendar service: ' + err);
-        return;
-      }
-      console.log('Event created: %s', event.start.date);
-    });
+        // to prevent rate limit issues
+        calendar.events.insert({
+          auth,
+          calendarId: 'primary',
+          resource: event,
+        }, (err, res) => {
+          if (err) {
+            console.log('There was an error contacting the Calendar service: ' + err);
+            return;
+          }
+          console.log('Event created: %s', event.start.date);
+        });
+      console.log('Wait...');
+    }, TIMEOUT_INTERVAL * (idx + 1) )
   })
 }
 

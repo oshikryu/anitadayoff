@@ -29,15 +29,20 @@ yarn start
 yarn start INPUT_FILE="another.csv"
 ```
 
+### Maintenance
+#### Holidays
+To maintain holiday logic, update the `holidayDateArray` in `src/constants.js` so they are treated
+like weekends. They change from year to year
+
 ### Development plan
 current version 0.0.1
 - read csv or external file
 - log out days off
 - google calendar entry created from output
+- Holidays are treated like weekends
 
 future:
 - OCR from picture for initials
-- Holidays are treated like weekends?
 
 
 ### Resources
