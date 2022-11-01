@@ -128,9 +128,11 @@ const processCsv = (input) => {
 export const readCSV = (inputPath) => {
   fs.readFile(inputPath, function (err, fileData) {
     csvParse(fileData, {columns: false, trim: true}, function(err, rows, idx) {
-      const results = processCsv(rows.splice(1))
-      processCalendarEvents(results)
-      // Your CSV data is in an array of arrys passed to this callback as rows.
+      if (rows != null) {
+        const results = processCsv(rows.splice(1))
+        processCalendarEvents(results)
+        // Your CSV data is in an array of arrys passed to this callback as rows.
+      }
     })
 
   })

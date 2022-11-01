@@ -14,7 +14,7 @@ year,month,day
 
 
 You need to generate a `credentials.json` and `token.json` in the `root` directory.
-Optionally do the quickstart method by running 
+Optionally do the quickstart method by running
 ```
 node gcal.js
 ```
